@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Amigo Secreto</title>
+<meta name="description" content="Sorteio de amigo secreto da família, com lista de presentes.">
+<meta name="theme-color" content="#A3201A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:wght@400;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bege:#F3EADB;
+  --papel:#FBF7F0;
+  --linha:#DCCDB6;
+  --borda:#7D6B5D;
+  --tinta:#24140F;
+  --suave:#54423A;
+  --vermelho:#A3201A;
+  --vermelho-esc:#7E1813;
+  --vermelho-claro:#F6DDD5;
+  --verde:#2E5B3A;
+  --verde-claro:#DDEBDD;
+  --serif:"Libre Caslon Text",Georgia,"Times New Roman",serif;
+  --sans:"Public Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bege);color:var(--tinta);font:17px/1.6 var(--sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3{font-family:var(--serif);font-weight:700;line-height:1.2;margin:0;letter-spacing:-.005em}
+p{margin:0}
+a{color:var(--vermelho);text-underline-offset:3px}
+a:hover{color:var(--vermelho-esc)}
+button,input,select,textarea{font:inherit;color:inherit}
+[hidden]{display:none!important}
+:focus-visible{outline:3px solid var(--vermelho);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* estrutura */
+.topo{border-bottom:1.5px solid var(--tinta);background:var(--papel)}
+.topo-in{max-width:760px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.marca{font-family:var(--serif);font-weight:700;font-size:1.1rem;color:var(--tinta);text-decoration:none;display:flex;align-items:center;gap:10px}
+.marca i{display:block;width:12px;height:12px;background:var(--vermelho);transform:rotate(45deg)}
+.topo-acao{font-size:.95rem}
+.pagina{max-width:760px;margin:0 auto;padding:36px 20px 64px}
+.rodape{max-width:760px;margin:0 auto;padding:0 20px 40px;color:var(--suave);font-size:.9rem}
+
+.titulo{margin-bottom:28px}
+.titulo .sobre{font-size:.82rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--vermelho);margin-bottom:8px}
+.titulo h1{font-size:clamp(2rem,6vw,2.8rem)}
+.titulo p{margin-top:10px;color:var(--suave);max-width:560px;font-size:1.05rem}
+.meta{display:flex;flex-wrap:wrap;gap:6px 22px;margin-top:14px;font-size:.98rem;color:var(--suave)}
+.meta b{color:var(--tinta);font-weight:600}
+
+.bloco{background:var(--papel);border:1.5px solid var(--tinta);border-radius:6px;padding:26px;margin-bottom:22px}
+.bloco h2{font-size:1.45rem}
+.bloco .desc{color:var(--suave);margin-top:6px}
+.bloco-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.sep{height:0;border-top:1.5px solid var(--linha);margin:22px 0}
+
+/* etapas */
+.etapas{list-style:none;padding:0;margin:0 0 26px;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px;counter-reset:e}
+.etapas li{counter-increment:e;border-top:4px solid var(--linha);padding-top:8px;font-size:.88rem;color:var(--suave);font-weight:500;line-height:1.3}
+.etapas li::before{content:"Etapa " counter(e);display:block;font-size:.74rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.etapas li.feita{border-color:var(--tinta);color:var(--tinta)}
+.etapas li.atual{border-color:var(--vermelho);color:var(--vermelho);font-weight:700}
+.etapa-titulo{font-size:1.6rem;margin-bottom:6px}
+.etapa-desc{color:var(--suave);margin-bottom:22px}
+
+/* formulários */
+.campo{margin-bottom:18px}
+.campo label,.rotulo{display:block;font-weight:600;font-size:.98rem;margin-bottom:6px}
+.campo .ajuda{display:block;font-size:.9rem;color:var(--suave);margin-top:6px}
+.opc{font-weight:400;color:var(--suave)}
+input[type=text],input[type=url],input[type=date],input[type=password],input[type=tel],select{
+  width:100%;height:50px;padding:0 14px;background:#fff;border:1.5px solid var(--borda);border-radius:4px;font-size:1.02rem;color:var(--tinta)}
+input:focus,select:focus{outline:none;border-color:var(--vermelho);box-shadow:0 0 0 3px var(--vermelho-claro)}
+input::placeholder{color:#8a7a70}
+.linha2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pin{font-size:1.5rem!important;letter-spacing:.5em;text-align:center;font-variant-numeric:tabular-nums;max-width:220px}
+.check{display:flex;gap:12px;align-items:flex-start;padding:14px;border:1.5px solid var(--linha);border-radius:4px;background:#fff;cursor:pointer}
+.check input{width:22px;height:22px;margin:2px 0 0;accent-color:var(--vermelho);flex:none}
+.check b{display:block}
+.check span{color:var(--suave);font-size:.94rem}
+
+.botoes{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:24px}
+.btn{appearance:none;border:1.5px solid var(--vermelho);background:var(--vermelho);color:#fff;font-weight:600;font-size:1rem;height:50px;padding:0 24px;border-radius:4px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;white-space:nowrap}
+.btn:hover{background:var(--vermelho-esc);border-color:var(--vermelho-esc);color:#fff}
+.btn.sec{background:transparent;color:var(--tinta);border-color:var(--tinta)}
+.btn.sec:hover{background:var(--tinta);color:var(--papel)}
+.btn.peq{height:40px;padding:0 14px;font-size:.93rem}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.link-btn{appearance:none;background:none;border:0;padding:0;color:var(--vermelho);font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px;font-size:.95rem}
+.link-btn:hover{color:var(--vermelho-esc)}
+.link-btn.neutro{color:var(--suave)}
+
+.aviso{border-left:4px solid var(--vermelho);background:var(--vermelho-claro);padding:12px 16px;border-radius:0 4px 4px 0;margin:0 0 18px;font-size:.98rem}
+.aviso.ok{border-color:var(--verde);background:var(--verde-claro)}
+.aviso.neutro{border-color:var(--borda);background:#EFE5D3}
+.erro{color:var(--vermelho);font-weight:600;font-size:.95rem;margin-top:10px;min-height:1.2em}
+
+/* lista de presentes */
+.presentes{list-style:none;padding:0;margin:0 0 6px;counter-reset:p}
+.presente{counter-increment:p;display:grid;grid-template-columns:36px 1fr auto;gap:14px;padding:16px 0;border-bottom:1.5px solid var(--linha);align-items:start}
+.presente:first-child{border-top:1.5px solid var(--linha)}
+.presente::before{content:counter(p);font-family:var(--serif);font-weight:700;font-size:1.3rem;color:var(--vermelho);line-height:1.3}
+.presente .nome{font-weight:600;font-size:1.06rem}
+.presente .obs{margin-top:4px;color:var(--tinta)}
+.presente .obs b{font-weight:600;color:var(--suave)}
+.presente .compra{display:inline-block;margin-top:6px;font-weight:600;word-break:break-word}
+.presente .acoes{display:flex;gap:14px;padding-top:2px}
+.vazio{padding:18px;border:1.5px dashed var(--borda);border-radius:4px;color:var(--suave);text-align:center}
+.form-item{margin-top:18px;padding:18px;border:1.5px solid var(--borda);border-radius:4px;background:#fff}
+.form-item h3{font-family:var(--sans);font-size:1.02rem;font-weight:700;margin-bottom:14px}
+.form-item .campo:last-of-type{margin-bottom:0}
+.salvo{font-size:.9rem;color:var(--suave);min-height:1.3em}
+
+/* amigo */
+.amigo-nome{font-family:var(--serif);font-size:clamp(2.2rem,8vw,3.2rem);color:var(--vermelho);line-height:1.1;margin:6px 0 4px;word-break:break-word}
+.revelar{text-align:center;padding:18px 0 6px}
+.revelar p{color:var(--suave);margin-bottom:16px}
+.espera{display:flex;gap:18px;align-items:flex-start}
+.espera .num{font-family:var(--serif);font-size:2.6rem;line-height:1;color:var(--vermelho);font-weight:700;min-width:56px}
+
+/* admin */
+.tabela{width:100%;border-collapse:collapse;font-size:.98rem}
+.tabela th{text-align:left;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--suave);font-weight:700;padding:0 8px 8px 0;border-bottom:1.5px solid var(--tinta)}
+.tabela td{padding:12px 8px 12px 0;border-bottom:1.5px solid var(--linha);vertical-align:middle}
+.tabela td.num{white-space:nowrap;color:var(--suave)}
+.tabela td.acao{text-align:right;white-space:nowrap}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border:1.5px solid currentColor;border-radius:3px;padding:0 6px;margin-left:6px;color:var(--suave);vertical-align:2px}
+.convite{display:flex;gap:8px}
+.convite input{font-size:.95rem;background:#F8F3EA}
+.confirmar{border:2px solid var(--vermelho);border-radius:4px;padding:18px;background:#fff;margin-top:16px}
+.confirmar h3{font-family:var(--sans);font-size:1.08rem;margin-bottom:6px}
+.confirmar ul{margin:8px 0 0;padding-left:20px}
+.pin-novo{font-family:var(--serif);font-size:2rem;letter-spacing:.3em;color:var(--vermelho)}
+
+.escolha{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.opcao{display:block;text-align:left;border:1.5px solid var(--tinta);background:var(--papel);border-radius:6px;padding:22px;cursor:pointer;color:var(--tinta);text-decoration:none}
+.opcao:hover{background:#fff;border-color:var(--vermelho)}
+.opcao b{display:block;font-family:var(--serif);font-size:1.25rem;margin-bottom:4px}
+.opcao span{color:var(--suave);font-size:.96rem}
+
+.carregando{padding:60px 0;text-align:center;color:var(--suave)}
+.lista-sorteios{list-style:none;padding:0;margin:0}
+.lista-sorteios li{border-top:1.5px solid var(--linha)}
+.lista-sorteios a{display:flex;justify-content:space-between;padding:14px 2px;text-decoration:none;color:var(--tinta);font-weight:600}
+.lista-sorteios a span{color:var(--vermelho)}
+
+@media (max-width:620px){
+  body{font-size:16.5px}
+  .pagina{padding:26px 16px 52px}
+  .bloco{padding:20px 18px}
+  .linha2,.escolha{grid-template-columns:1fr}
+  .etapas li{font-size:0;padding-top:6px}
+  .etapas li::before{font-size:.72rem}
+  .etapas li.atual{font-size:.85rem}
+  .presente{grid-template-columns:28px 1fr}
+  .presente .acoes{grid-column:2}
+  .botoes .btn{flex:1}
+  .convite{flex-direction:column}
+  .tabela td.acao{display:block;text-align:left;padding-top:0}
+  .tabela tr{display:block;border-bottom:1.5px solid var(--linha);padding:8px 0}
+  .tabela td{display:inline-block;border:0;padding:4px 10px 4px 0}
+  .tabela thead{display:none}
+}
+</style>
+</head>
+<body>
+<header class="topo">
+  <div class="topo-in">
+    <a class="marca" href="/"><i></i>Amigo Secreto</a>
+    <div class="topo-acao" id="topoAcao"></div>
+  </div>
+</header>
+<main class="pagina" id="app"><div class="carregando">Carregando…</div></main>
+<footer class="rodape" id="rodape">No sorteio, ninguém tira a si mesmo, ninguém é tirado por duas pessoas e cada um tira exatamente uma pessoa.</footer>
+
+<script>
+(() => {
+'use strict';
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const app = $('#app');
+
+/* ---------- armazenamento local (sessões neste aparelho) ---------- */
+const local = {
+  get(k, d = null) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+  del(k) { try { localStorage.removeItem(k); } catch {} },
+};
+const tokenDe = gid => local.get('as:tok:' + gid);
+function lembrarGrupo(gid, nome) {
+  const l = local.get('as:grupos', []).filter(g => g.id !== gid);
+  l.unshift({ id: gid, nome }); local.set('as:grupos', l.slice(0, 10));
+}
+function esquecerGrupo(gid) {
+  local.del('as:tok:' + gid);
+  local.set('as:grupos', local.get('as:grupos', []).filter(g => g.id !== gid));
+}
+
+/* ---------- API ---------- */
+async function api(metodo, caminho, corpo, gid) {
+  const h = { 'Content-Type': 'application/json' };
+  const t = gid && tokenDe(gid);
+  if (t) h.Authorization = 'Bearer ' + t;
+  let r;
+  try { r = await fetch('/api/' + caminho, { method: metodo, headers: h, body: corpo ? JSON.stringify(corpo) : undefined }); }
+  catch { throw Object.assign(new Error('Sem conexão. Confira sua internet e tente de novo.'), { status: 0 }); }
+  let dados = {};
+  try { dados = await r.json(); } catch {}
+  if (!r.ok) throw Object.assign(new Error(dados.erro || 'Algo deu errado. Tente de novo.'), { status: r.status });
+  return dados;
+}
+
+/* ---------- utilidades ---------- */
+function dataLonga(d) {
+  if (!d) return '';
+  const [y, m, dd] = d.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, dd)).toLocaleDateString('pt-BR', { timeZone: 'UTC', day: 'numeric', month: 'long', year: 'numeric' });
+}
+function dominio(u) { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return ''; } }
+function linkSeguro(u) {
+  u = String(u || '').trim(); if (!u) return '';
+  if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
+  try { const x = new URL(u); return /^https?:$/.test(x.protocol) && x.hostname.includes('.') ? x.href : ''; } catch { return ''; }
+}
+async function copiar(texto, btn) {
+  let ok = false;
+  try { await navigator.clipboard.writeText(texto); ok = true; } catch {
+    try { const ta = Object.assign(document.createElement('textarea'), { value: texto }); ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.append(ta); ta.select(); ok = document.execCommand('copy'); ta.remove(); } catch {}
+  }
+  if (btn) { const t = btn.textContent; btn.textContent = ok ? 'Copiado' : 'Selecione e copie'; setTimeout(() => (btn.textContent = t), 1800); }
+}
+function ocupado(btn, sim, texto) {
+  if (!btn) return;
+  if (sim) { btn.dataset.txt = btn.textContent; btn.disabled = true; if (texto) btn.textContent = texto; }
+  else { btn.disabled = false; if (btn.dataset.txt) btn.textContent = btn.dataset.txt; }
+}
+function mostrarErro(el, e) { if (el) el.textContent = e?.message || String(e || ''); }
+function pinInput(id, rotulo, ajuda) {
+  return `<div class="campo"><label for="${id}">${rotulo}</label>
+    <input type="password" id="${id}" class="pin" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="····">
+    ${ajuda ? `<span class="ajuda">${ajuda}</span>` : ''}</div>`;
+}
+const soNumeros = el => el.addEventListener('input', () => { el.value = el.value.replace(/\D/g, '').slice(0, 4); });
+function etapasHTML(nomes, atual) {
+  return `<ol class="etapas" aria-label="Etapas">${nomes.map((n, i) => `<li class="${i < atual ? 'feita' : i === atual ? 'atual' : ''}" ${i === atual ? 'aria-current="step"' : ''}>${esc(n)}</li>`).join('')}</ol>`;
+}
+function setTopo(html) { $('#topoAcao').innerHTML = html || ''; }
+
+/* ---------- editor de lista de presentes (reutilizado) ---------- */
+function editorPresentes(container, itensIniciais, aoMudar) {
+  let itens = itensIniciais.map(i => ({ ...i }));
+  let editando = -1;
+  function render() {
+    container.innerHTML = `
+      ${itens.length ? `<ol class="presentes">${itens.map((it, i) => `
+        <li class="presente">
+          <div>
+            <div class="nome">${esc(it.nome)}</div>
+            ${it.obs ? `<div class="obs"><b>Observação:</b> ${esc(it.obs)}</div>` : ''}
+            ${linkSeguro(it.link) ? `<a class="compra" href="${esc(linkSeguro(it.link))}" target="_blank" rel="noopener noreferrer">Onde comprar: ${esc(dominio(linkSeguro(it.link)))}</a>` : ''}
+          </div>
+          <div class="acoes">
+            <button type="button" class="link-btn neutro" data-ed="${i}">Editar</button>
+            <button type="button" class="link-btn" data-rm="${i}">Remover</button>
+          </div>
+        </li>`).join('')}</ol>` : `<p class="vazio">Nenhum presente ainda. Adicione o primeiro abaixo.</p>`}
+      <form class="form-item" novalidate>
+        <h3>${editando >= 0 ? `Editando o presente ${editando + 1}` : itens.length ? 'Adicionar outro presente' : 'Adicionar presente'}</h3>
+        <div class="campo"><label for="piNome">O que você gostaria de ganhar</label>
+          <input type="text" id="piNome" maxlength="80" placeholder="Ex.: Camisa social, livro, perfume" autocomplete="off"></div>
+        <div class="campo"><label for="piLink">Link de onde comprar <span class="opc">(opcional)</span></label>
+          <input type="url" id="piLink" maxlength="500" placeholder="Cole o link da loja" inputmode="url" autocomplete="off"></div>
+        <div class="campo"><label for="piObs">Observação <span class="opc">(opcional)</span></label>
+          <input type="text" id="piObs" maxlength="160" placeholder="Ex.: tamanho M, cor azul-marinho, número 41" autocomplete="off">
+          <span class="ajuda">Use para tamanho de roupa ou calçado, cor, modelo ou qualquer detalhe.</span></div>
+        <p class="erro" id="piErro" role="alert"></p>
+        <div class="botoes" style="margin-top:8px">
+          <button class="btn ${itens.length ? 'sec' : ''}" type="submit">${editando >= 0 ? 'Salvar alteração' : 'Adicionar à lista'}</button>
+          ${editando >= 0 ? '<button type="button" class="link-btn neutro" data-cancel>Cancelar</button>' : ''}
+        </div>
+      </form>`;
+    const f = $('form', container);
+    if (editando >= 0) { const it = itens[editando]; $('#piNome', f).value = it.nome; $('#piLink', f).value = it.link || ''; $('#piObs', f).value = it.obs || ''; }
+    f.addEventListener('submit', e => {
+      e.preventDefault();
+      const nome = $('#piNome', f).value.trim(), link = $('#piLink', f).value.trim(), obs = $('#piObs', f).value.trim();
+      if (!nome) { $('#piErro', f).textContent = 'Escreva o nome do presente.'; $('#piNome', f).focus(); return; }
+      if (link && !linkSeguro(link)) { $('#piErro', f).textContent = 'Esse link não parece válido. Confira ou deixe em branco.'; $('#piLink', f).focus(); return; }
+      if (editando < 0 && itens.length >= 30) { $('#piErro', f).textContent = 'O limite é de 30 presentes.'; return; }
+      const item = { nome, link: linkSeguro(link), obs };
+      if (editando >= 0) itens[editando] = item; else itens.push(item);
+      editando = -1; render(); aoMudar(itens);
+      $('#piNome', container).focus();
+    });
+    container.onclick = e => {
+      const ed = e.target.closest('[data-ed]'), rm = e.target.closest('[data-rm]'), cn = e.target.closest('[data-cancel]');
+      if (ed) { editando = +ed.dataset.ed; render(); $('#piNome', container).focus(); }
+      if (rm) { itens.splice(+rm.dataset.rm, 1); editando = -1; render(); aoMudar(itens); }
+      if (cn) { editando = -1; render(); }
+    };
+  }
+  render();
+  return {
+    get itens() { return itens; },
+    // adiciona o que estiver digitado e ainda não foi salvo
+    pendente() { const n = $('#piNome', container)?.value.trim(); return !!n; },
+  };
+}
+
+/* =========================================================
+   ROTEAMENTO
+   ========================================================= */
+function rota() {
+  const m = location.pathname.match(/^\/g\/([a-z0-9]{6,12})\/?$/);
+  window.scrollTo(0, 0);
+  if (m) return telaGrupo(m[1]);
+  return telaInicio();
+}
+window.addEventListener('popstate', rota);
+function ir(caminho) { history.pushState(null, '', caminho); rota(); }
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[data-ir]');
+  if (a) { e.preventDefault(); ir(a.getAttribute('href')); }
+});
+
+/* =========================================================
+   INÍCIO: criar sorteio
+   ========================================================= */
+function telaInicio() {
+  setTopo('');
+  document.title = 'Amigo Secreto';
+  const meus = local.get('as:grupos', []);
+  const criar = { etapa: 0, grupo: { nome: '', data: '', valor: '' }, voce: { nome: '', pin: '', participa: true } };
+  const NOMES = ['O sorteio', 'Você', 'Link de convite'];
+
+  function render() {
+    const e = criar.etapa;
+    app.innerHTML = `
+      <div class="titulo">
+        <p class="sobre">Para quem organiza</p>
+        <h1>Crie o amigo secreto da família</h1>
+        <p>Você cria o sorteio e envia um link. Cada pessoa se cadastra com o nome e a lista de presentes. Quando todos tiverem entrado, você faz o sorteio.</p>
+      </div>
+      ${meus.length && e === 0 ? `<section class="bloco"><h2>Seus sorteios neste aparelho</h2>
+        <ul class="lista-sorteios" style="margin-top:14px">${meus.map(g => `<li><a href="/g/${esc(g.id)}" data-ir>${esc(g.nome)} <span>Abrir</span></a></li>`).join('')}</ul></section>` : ''}
+      <section class="bloco">
+        ${etapasHTML(NOMES, e)}
+        <div id="etapa"></div>
+      </section>`;
+    const box = $('#etapa');
+    if (e === 0) {
+      box.innerHTML = `
+        <h2 class="etapa-titulo">Sobre o sorteio</h2>
+        <p class="etapa-desc">Essas informações aparecem para todos que entrarem pelo link.</p>
+        <form id="f" novalidate>
+          <div class="campo"><label for="gNome">Nome do amigo secreto</label>
+            <input type="text" id="gNome" maxlength="60" placeholder="Ex.: Natal da família Lima 2026" value="${esc(criar.grupo.nome)}"></div>
+          <div class="linha2">
+            <div class="campo"><label for="gData">Data da troca de presentes <span class="opc">(opcional)</span></label>
+              <input type="date" id="gData" value="${esc(criar.grupo.data)}"></div>
+            <div class="campo"><label for="gValor">Valor sugerido <span class="opc">(opcional)</span></label>
+              <input type="text" id="gValor" maxlength="30" placeholder="Ex.: R$ 100" value="${esc(criar.grupo.valor)}"></div>
+          </div>
+          <p class="erro" id="erro" role="alert"></p>
+          <div class="botoes"><button class="btn" type="submit">Continuar</button></div>
+        </form>`;
+      $('#f').addEventListener('submit', ev => {
+        ev.preventDefault();
+        criar.grupo = { nome: $('#gNome').value.trim(), data: $('#gData').value, valor: $('#gValor').value.trim() };
+        if (criar.grupo.nome.length < 2) { $('#erro').textContent = 'Dê um nome para o sorteio.'; $('#gNome').focus(); return; }
+        criar.etapa = 1; render();
+      });
+      $('#gNome').focus();
+    }
+    if (e === 1) {
+      box.innerHTML = `
+        <h2 class="etapa-titulo">Seus dados de organizador</h2>
+        <p class="etapa-desc">Com seu nome e PIN você volta à área de organização em qualquer aparelho.</p>
+        <form id="f" novalidate>
+          <div class="campo"><label for="vNome">Seu nome</label>
+            <input type="text" id="vNome" maxlength="40" placeholder="Como a família te chama" value="${esc(criar.voce.nome)}" autocomplete="given-name"></div>
+          <div class="linha2">
+            ${pinInput('vPin', 'Crie um PIN de 4 números', 'Não use sua senha do banco.')}
+            ${pinInput('vPin2', 'Repita o PIN')}
+          </div>
+          <label class="check"><input type="checkbox" id="vPart" ${criar.voce.participa ? 'checked' : ''}>
+            <div><b>Eu também vou participar do sorteio</b><span>Desmarque se você só vai organizar e não vai trocar presente.</span></div></label>
+          <p class="erro" id="erro" role="alert"></p>
+          <div class="botoes">
+            <button class="btn" type="submit" id="bCriar">Criar sorteio</button>
+            <button class="btn sec" type="button" id="bVoltar">Voltar</button>
+          </div>
+        </form>`;
+      soNumeros($('#vPin')); soNumeros($('#vPin2'));
+      $('#bVoltar').onclick = () => { criar.voce.nome = $('#vNome').value; criar.etapa = 0; render(); };
+      $('#f').addEventListener('submit', async ev => {
+        ev.preventDefault();
+        const nome = $('#vNome').value.trim(), pin = $('#vPin').value, pin2 = $('#vPin2').value, erro = $('#erro');
+        criar.voce.nome = nome; criar.voce.participa = $('#vPart').checked;
+        if (nome.length < 2) { erro.textContent = 'Digite seu nome.'; $('#vNome').focus(); return; }
+        if (!/^\d{4}$/.test(pin)) { erro.textContent = 'O PIN precisa ter 4 números.'; $('#vPin').focus(); return; }
+        if (pin !== pin2) { erro.textContent = 'Os dois PINs não são iguais.'; $('#vPin2').focus(); return; }
+        const b = $('#bCriar'); ocupado(b, true, 'Criando…'); erro.textContent = '';
+        try {
+          const r = await api('POST', 'grupos', { grupo: criar.grupo, voce: { nome, pin, participa: criar.voce.participa } });
+          local.set('as:tok:' + r.id, r.token); lembrarGrupo(r.id, criar.grupo.nome);
+          local.set('as:recemCriado', r.id);
+          ir('/g/' + r.id);
+        } catch (er) { mostrarErro(erro, er); ocupado(b, false); }
+      });
+      $('#vNome').focus();
+    }
+  }
+  render();
+}
+
+/* =========================================================
+   GRUPO
+   ========================================================= */
+async function telaGrupo(gid) {
+  app.innerHTML = '<div class="carregando">Carregando…</div>';
+  setTopo('');
+  if (tokenDe(gid)) {
+    try { const perfil = await api('GET', `grupos/${gid}/eu`, null, gid); return telaPerfil(gid, perfil); }
+    catch (e) { if (e.status !== 401) return telaErro(e); local.del('as:tok:' + gid); }
+  }
+  let g;
+  try { g = await api('GET', 'grupos/' + gid); } catch (e) { return telaErro(e); }
+  telaEntrada(gid, g);
+}
+function telaErro(e) {
+  app.innerHTML = `<div class="titulo"><h1>Não foi possível abrir</h1><p>${esc(e.message)}</p></div>
+    <div class="botoes"><button class="btn" onclick="location.reload()">Tentar de novo</button><a class="btn sec" href="/" data-ir>Página inicial</a></div>`;
+}
+function cabecalhoGrupo(g, sobre) {
+  document.title = g.nome + ' · Amigo Secreto';
+  return `<div class="titulo">
+    <p class="sobre">${esc(sobre || 'Amigo secreto')}</p>
+    <h1>${esc(g.nome)}</h1>
+    <div class="meta">
+      ${g.data ? `<span>Troca de presentes: <b>${esc(dataLonga(g.data))}</b></span>` : ''}
+      ${g.valor ? `<span>Valor sugerido: <b>${esc(g.valor)}</b></span>` : ''}
+      <span><b>${g.participantes}</b> ${g.participantes === 1 ? 'pessoa participando' : 'pessoas participando'}</span>
+    </div></div>`;
+}
+
+/* ---------- entrada: cadastro ou login ---------- */
+function telaEntrada(gid, g, modo) {
+  const sorteado = g.status === 'sorteado';
+  if (!modo) {
+    app.innerHTML = cabecalhoGrupo(g, 'Você foi convidado') + `
+      ${sorteado ? `<p class="aviso neutro">O sorteio já foi realizado. Se você se cadastrou, entre com seu nome e PIN para ver quem tirou.</p>` : ''}
+      <div class="escolha">
+        ${sorteado ? '' : `<button class="opcao" id="oNovo"><b>Quero participar</b><span>Primeira vez aqui. Cadastre seu nome e sua lista de presentes.</span></button>`}
+        <button class="opcao" id="oVolta"><b>Já me cadastrei</b><span>Entre com seu nome e PIN para ver seu perfil${sorteado ? ' e quem você tirou' : ''}.</span></button>
+      </div>`;
+    $('#oNovo') && ($('#oNovo').onclick = () => telaEntrada(gid, g, 'cadastro'));
+    $('#oVolta').onclick = () => telaEntrada(gid, g, 'login');
+    return;
+  }
+  if (modo === 'login') return telaLogin(gid, g);
+  return telaCadastro(gid, g);
+}
+
+function telaLogin(gid, g) {
+  app.innerHTML = cabecalhoGrupo(g) + `
+    <section class="bloco">
+      <h2>Entrar no seu perfil</h2>
+      <p class="desc">Escolha seu nome e digite o PIN que você criou no cadastro.</p>
+      <form id="f" novalidate style="margin-top:20px">
+        <div class="campo"><label for="lNome">Seu nome</label>
+          <select id="lNome"><option value="">Escolha na lista</option>${g.pessoas.map(p => `<option value="${esc(p.id)}">${esc(p.nome)}</option>`).join('')}</select></div>
+        ${pinInput('lPin', 'Seu PIN', 'Esqueceu? Peça para quem organiza gerar um PIN novo para você.')}
+        <p class="erro" id="erro" role="alert"></p>
+        <div class="botoes"><button class="btn" type="submit" id="bEntrar">Entrar</button><button class="btn sec" type="button" id="bVoltar">Voltar</button></div>
+      </form>
+    </section>`;
+  soNumeros($('#lPin'));
+  $('#bVoltar').onclick = () => telaEntrada(gid, g);
+  $('#f').addEventListener('submit', async ev => {
+    ev.preventDefault();
+    const pessoaId = $('#lNome').value, pin = $('#lPin').value, erro = $('#erro');
+    if (!pessoaId) { erro.textContent = 'Escolha seu nome.'; return; }
+    if (!/^\d{4}$/.test(pin)) { erro.textContent = 'Digite os 4 números do PIN.'; return; }
+    const b = $('#bEntrar'); ocupado(b, true, 'Entrando…');
+    try {
+      const r = await api('POST', `grupos/${gid}/login`, { pessoaId, pin });
+      local.set('as:tok:' + gid, r.token); lembrarGrupo(gid, g.nome); telaGrupo(gid);
+    } catch (e) { mostrarErro(erro, e); ocupado(b, false); }
+  });
+}
+
+function telaCadastro(gid, g) {
+  const NOMES = ['Seu nome', 'Seu PIN', 'Lista de presentes', 'Confirmar'];
+  const c = { etapa: 0, nome: '', pin: '', itens: [] };
+  function render() {
+    app.innerHTML = cabecalhoGrupo(g, 'Cadastro') + `<section class="bloco">${etapasHTML(NOMES, c.etapa)}<div id="etapa"></div></section>`;
+    const box = $('#etapa');
+    if (c.etapa === 0) {
+      box.innerHTML = `
+        <h2 class="etapa-titulo">Qual é o seu nome?</h2>
+        <p class="etapa-desc">É assim que você vai aparecer para quem te tirar.</p>
+        <form id="f" novalidate>
+          <div class="campo"><label for="cNome">Nome</label><input type="text" id="cNome" maxlength="40" value="${esc(c.nome)}" placeholder="Ex.: Tia Lúcia" autocomplete="given-name"></div>
+          <p class="erro" id="erro" role="alert"></p>
+          <div class="botoes"><button class="btn" type="submit">Continuar</button><button class="btn sec" type="button" id="bVoltar">Voltar</button></div>
+        </form>`;
+      $('#bVoltar').onclick = () => telaEntrada(gid, g);
+      $('#f').addEventListener('submit', ev => {
+        ev.preventDefault();
+        const n = $('#cNome').value.trim().replace(/\s+/g, ' ');
+        if (n.length < 2) { $('#erro').textContent = 'Digite seu nome.'; $('#cNome').focus(); return; }
+        const igual = g.pessoas.find(p => p.nome.toLowerCase() === n.toLowerCase());
+        if (igual) { $('#erro').textContent = `Já existe alguém chamado "${n}". Se for você, volte e escolha "Já me cadastrei". Se não, acrescente um sobrenome.`; return; }
+        c.nome = n; c.etapa = 1; render();
+      });
+      $('#cNome').focus();
+    }
+    if (c.etapa === 1) {
+      box.innerHTML = `
+        <h2 class="etapa-titulo">Crie um PIN de 4 números</h2>
+        <p class="etapa-desc">Você vai usar seu nome e esse PIN para voltar ao seu perfil, editar sua lista e ver quem você tirou depois do sorteio.</p>
+        <form id="f" novalidate>
+          <div class="linha2">${pinInput('cPin', 'PIN', 'Algo fácil de lembrar, mas não a senha do banco.')}${pinInput('cPin2', 'Repita o PIN')}</div>
+          <p class="erro" id="erro" role="alert"></p>
+          <div class="botoes"><button class="btn" type="submit">Continuar</button><button class="btn sec" type="button" id="bVoltar">Voltar</button></div>
+        </form>`;
+      soNumeros($('#cPin')); soNumeros($('#cPin2'));
+      $('#bVoltar').onclick = () => { c.etapa = 0; render(); };
+      $('#f').addEventListener('submit', ev => {
+        ev.preventDefault();
+        const p1 = $('#cPin').value, p2 = $('#cPin2').value;
+        if (!/^\d{4}$/.test(p1)) { $('#erro').textContent = 'O PIN precisa ter 4 números.'; $('#cPin').focus(); return; }
+        if (p1 !== p2) { $('#erro').textContent = 'Os dois PINs não são iguais.'; $('#cPin2').focus(); return; }
+        c.pin = p1; c.etapa = 2; render();
+      });
+      $('#cPin').focus();
+    }
+    if (c.etapa === 2) {
+      box.innerHTML = `
+        <h2 class="etapa-titulo">Monte sua lista de presentes</h2>
+        <p class="etapa-desc">Adicione quantos presentes quiser. Quem te tirar vai ver esta lista. Você pode mudar depois, no seu perfil.</p>
+        <div id="editor"></div>
+        <p class="erro" id="erro" role="alert"></p>
+        <div class="sep"></div>
+        <div class="botoes" style="margin-top:0"><button class="btn" id="bSeguir">Continuar</button><button class="btn sec" id="bVoltar">Voltar</button></div>`;
+      const ed = editorPresentes($('#editor'), c.itens, itens => { c.itens = itens.map(i => ({ ...i })); });
+      $('#bVoltar').onclick = () => { c.etapa = 1; render(); };
+      $('#bSeguir').onclick = () => {
+        if (ed.pendente()) { $('#erro').textContent = 'Você digitou um presente mas não clicou em "Adicionar à lista".'; return; }
+        c.etapa = 3; render();
+      };
+    }
+    if (c.etapa === 3) {
+      box.innerHTML = `
+        <h2 class="etapa-titulo">Confira e confirme</h2>
+        <p class="etapa-desc">Se estiver tudo certo, confirme para entrar no sorteio.</p>
+        <dl style="margin:0 0 6px">
+          <dt class="rotulo">Nome</dt><dd style="margin:0 0 14px">${esc(c.nome)}</dd>
+          <dt class="rotulo">Lista de presentes</dt>
+          <dd style="margin:0">${c.itens.length ? `<ol class="presentes">${c.itens.map(it => `<li class="presente"><div><div class="nome">${esc(it.nome)}</div>${it.obs ? `<div class="obs"><b>Observação:</b> ${esc(it.obs)}</div>` : ''}${it.link ? `<span class="compra" style="color:var(--suave)">Link: ${esc(dominio(it.link))}</span>` : ''}</div></li>`).join('')}</ol>` : '<p class="aviso neutro">Sua lista está vazia. Você pode entrar assim e completar depois no seu perfil.</p>'}</dd>
+        </dl>
+        <p class="erro" id="erro" role="alert"></p>
+        <div class="botoes"><button class="btn" id="bConfirmar">Confirmar e entrar no sorteio</button><button class="btn sec" id="bVoltar">Voltar</button></div>`;
+      $('#bVoltar').onclick = () => { c.etapa = 2; render(); };
+      $('#bConfirmar').onclick = async () => {
+        const b = $('#bConfirmar'); ocupado(b, true, 'Enviando…');
+        try {
+          const r = await api('POST', `grupos/${gid}/entrar`, { nome: c.nome, pin: c.pin, itens: c.itens });
+          local.set('as:tok:' + gid, r.token); lembrarGrupo(gid, g.nome); local.set('as:bemvindo', gid);
+          telaGrupo(gid);
+        } catch (e) { mostrarErro($('#erro'), e); ocupado(b, false); }
+      };
+    }
+    window.scrollTo(0, 0);
+  }
+  render();
+}
+
+/* ---------- perfil ---------- */
+function telaPerfil(gid, P) {
+  const g = P.grupo, eu = P.eu, sorteado = g.status === 'sorteado';
+  lembrarGrupo(gid, g.nome);
+  setTopo(`<button class="link-btn neutro" id="bSair">Sair deste aparelho</button>`);
+  $('#bSair').onclick = async () => { try { await api('POST', `grupos/${gid}/sair`, null, gid); } catch {} esquecerGrupo(gid); ir('/g/' + gid); };
+  const bemvindo = local.get('as:bemvindo') === gid; if (bemvindo) local.del('as:bemvindo');
+  const recem = local.get('as:recemCriado') === gid; if (recem) local.del('as:recemCriado');
+  const urlConvite = location.origin + '/g/' + gid;
+
+  app.innerHTML = cabecalhoGrupo(g, eu.admin ? 'Você organiza este sorteio' : 'Seu perfil') + `
+    ${bemvindo ? `<p class="aviso ok"><b>Cadastro feito, ${esc(eu.nome)}.</b> Você está no sorteio. Volte por este mesmo link depois que o sorteio for realizado para ver quem você tirou.</p>` : ''}
+    ${recem ? `<p class="aviso ok"><b>Sorteio criado.</b> Agora envie o link de convite para a família. Ele está na seção "Organização", mais abaixo.</p>` : ''}
+
+    ${eu.admin && !sorteado ? `<section class="bloco" id="secAdm"></section>` : ''}
+    <section class="bloco" id="secAmigo">
+      <h2>Seu amigo secreto</h2>
+      <div id="amigo" style="margin-top:16px"></div>
+    </section>
+
+    <section class="bloco">
+      <div class="bloco-head"><div><h2>Sua lista de presentes</h2><p class="desc">Quem te tirar vê esta lista. Mudanças são salvas na hora.</p></div><span class="salvo" id="salvo"></span></div>
+      <div id="minhaLista"></div>
+    </section>
+
+    ${eu.admin && sorteado ? `<section class="bloco" id="secAdm"></section>` : ''}
+    <p style="color:var(--suave);font-size:.95rem">Você entrou como <b style="color:var(--tinta)">${esc(eu.nome)}</b>. Para voltar a este perfil, use o link <a href="${esc(urlConvite)}">${esc(urlConvite.replace(/^https?:\/\//, ''))}</a> com seu nome e PIN.</p>`;
+
+  // amigo
+  const amigoBox = $('#amigo');
+  if (!eu.participa) {
+    amigoBox.innerHTML = `<p class="aviso neutro">Você está só organizando, sem participar do sorteio.</p>`;
+  } else if (!sorteado) {
+    amigoBox.innerHTML = `<p><b>O sorteio ainda não foi feito.</b></p><p style="color:var(--suave);margin-top:4px">Até agora, ${g.participantes} ${g.participantes === 1 ? 'pessoa entrou' : 'pessoas entraram'}. Quando ${eu.admin ? 'você realizar' : 'quem organiza realizar'} o sorteio, o nome de quem você tirou aparece aqui.</p>`;
+  } else if (P.amigo) {
+    const mostra = () => {
+      const a = P.amigo;
+      amigoBox.innerHTML = `
+        <p style="color:var(--suave)">Você tirou</p>
+        <p class="amigo-nome">${esc(a.nome)}</p>
+        <p style="color:var(--suave);margin-bottom:20px">Guarde segredo até o dia da troca.</p>
+        <h3 style="font-size:1.15rem;margin-bottom:10px">Lista de presentes de ${esc(a.nome)}</h3>
+        ${a.itens.length ? `<ol class="presentes">${a.itens.map(it => `
+          <li class="presente"><div>
+            <div class="nome">${esc(it.nome)}</div>
+            ${it.obs ? `<div class="obs"><b>Observação:</b> ${esc(it.obs)}</div>` : ''}
+            ${linkSeguro(it.link) ? `<a class="compra" href="${esc(linkSeguro(it.link))}" target="_blank" rel="noopener noreferrer">Ver onde comprar (${esc(dominio(linkSeguro(it.link)))})</a>` : ''}
+          </div></li>`).join('')}</ol>` : `<p class="vazio">${esc(a.nome)} ainda não colocou nenhum presente na lista. Volte mais tarde.</p>`}
+        <div class="botoes"><button class="btn sec peq" id="bEsconder">Esconder</button></div>`;
+      $('#bEsconder').onclick = esconde;
+    };
+    const esconde = () => {
+      amigoBox.innerHTML = `<div class="revelar"><p>O sorteio foi feito. Confira se ninguém está olhando a tela.</p><button class="btn" id="bVer">Mostrar quem eu tirei</button></div>`;
+      $('#bVer').onclick = mostra;
+    };
+    esconde();
+  }
+
+  // minha lista
+  let salvarT, versao = 0;
+  editorPresentes($('#minhaLista'), eu.itens, itens => {
+    clearTimeout(salvarT); const v = ++versao;
+    $('#salvo').textContent = 'Salvando…';
+    salvarT = setTimeout(async () => {
+      try { await api('PUT', `grupos/${gid}/eu`, { itens }, gid); if (v === versao) $('#salvo').textContent = 'Salvo'; }
+      catch (e) { $('#salvo').textContent = 'Não salvou: ' + e.message; }
+    }, 300);
+  });
+
+  if (eu.admin) renderAdm(gid, P, urlConvite);
+
+  // atualiza ao voltar para a aba (pega o sorteio feito em outro aparelho)
+  const aoVoltar = async () => {
+    if (document.visibilityState !== 'visible' || !location.pathname.endsWith(gid)) return;
+    try { const novo = await api('GET', `grupos/${gid}/eu`, null, gid); if (novo.grupo.status !== g.status) telaPerfil(gid, novo); } catch {}
+  };
+  document.onvisibilitychange = aoVoltar;
+}
+
+function renderAdm(gid, P, urlConvite) {
+  const box = $('#secAdm'), g = P.grupo, sorteado = g.status === 'sorteado';
+  const pessoas = P.adm.pessoas, part = pessoas.filter(p => p.participa);
+  const msgWa = `Você foi convidado para o amigo secreto "${g.nome}". Entre pelo link, cadastre seu nome e sua lista de presentes: ${urlConvite}`;
+  box.innerHTML = `
+    <h2>Organização</h2>
+    <p class="desc">Só você vê esta parte.</p>
+
+    <h3 style="font-family:var(--sans);font-size:1.05rem;margin:22px 0 4px">1. Envie o link de convite</h3>
+    <p style="color:var(--suave);margin-bottom:10px">Cada pessoa entra por ele, se cadastra e depois volta pelo mesmo link para ver o resultado.</p>
+    <div class="convite"><input type="text" readonly value="${esc(urlConvite)}" aria-label="Link de convite" onclick="this.select()">
+      <button class="btn sec" id="bCopiar">Copiar link</button>
+      <a class="btn sec" href="https://wa.me/?text=${encodeURIComponent(msgWa)}" target="_blank" rel="noopener">Enviar pelo WhatsApp</a></div>
+
+    <h3 style="font-family:var(--sans);font-size:1.05rem;margin:28px 0 10px">2. Acompanhe quem entrou</h3>
+    <table class="tabela">
+      <thead><tr><th>Nome</th><th>Presentes</th><th></th></tr></thead>
+      <tbody>${pessoas.map(p => `<tr>
+        <td><b style="font-weight:600">${esc(p.nome)}</b>${p.admin ? '<span class="tag">Você</span>' : ''}${p.participa ? '' : '<span class="tag">Não participa</span>'}</td>
+        <td class="num">${p.itens} ${p.itens === 1 ? 'item' : 'itens'}</td>
+        <td class="acao">
+          ${p.admin ? (sorteado ? '' : `<button class="link-btn neutro" data-part="${p.participa ? 0 : 1}">${p.participa ? 'Não vou participar' : 'Quero participar'}</button>`)
+            : `<button class="link-btn neutro" data-pin="${esc(p.id)}" data-nome="${esc(p.nome)}">Novo PIN</button>${sorteado ? '' : ` &nbsp; <button class="link-btn" data-rm="${esc(p.id)}" data-nome="${esc(p.nome)}">Remover</button>`}`}
+        </td></tr>`).join('')}</tbody>
+    </table>
+    <div id="admMsg" style="margin-top:14px"></div>
+
+    <h3 style="font-family:var(--sans);font-size:1.05rem;margin:28px 0 10px">3. Realize o sorteio</h3>
+    <div id="sorteioArea"></div>`;
+
+  $('#bCopiar').onclick = e => copiar(urlConvite, e.currentTarget);
+  const area = $('#sorteioArea'), admMsg = $('#admMsg');
+
+  if (sorteado) {
+    const quando = new Date(g.sorteadoEm).toLocaleString('pt-BR', { dateStyle: 'long', timeStyle: 'short' });
+    area.innerHTML = `<p class="aviso ok"><b>Sorteio realizado em ${esc(quando)}.</b> Cada pessoa vê quem tirou entrando pelo link com seu nome e PIN. Você não vê os pares.</p>
+      <button class="link-btn" id="bDesfazer">Desfazer sorteio</button>
+      <div id="confirma"></div>`;
+    $('#bDesfazer').onclick = () => {
+      $('#confirma').innerHTML = `<div class="confirmar"><h3>Desfazer o sorteio?</h3>
+        <p>O resultado atual é apagado e todo mundo deixa de ver quem tirou. Você vai precisar sortear de novo. Use só se alguém precisar entrar ou sair.</p>
+        <div class="botoes" style="margin-top:14px"><button class="btn" id="bSim">Sim, desfazer</button><button class="btn sec" id="bNao">Cancelar</button></div><p class="erro" id="erroC"></p></div>`;
+      $('#bNao').onclick = () => ($('#confirma').innerHTML = '');
+      $('#bSim').onclick = async e => {
+        ocupado(e.currentTarget, true, 'Desfazendo…');
+        try { telaPerfil(gid, await api('POST', `grupos/${gid}/desfazer`, null, gid)); }
+        catch (er) { mostrarErro($('#erroC'), er); ocupado(e.currentTarget, false); }
+      };
+    };
+  } else {
+    const falta = Math.max(0, 3 - part.length);
+    area.innerHTML = `
+      <p style="margin-bottom:14px">Faça o sorteio quando todos tiverem se cadastrado. Depois disso, ninguém mais entra.</p>
+      ${falta ? `<p class="aviso neutro">Faltam pelo menos ${falta} ${falta === 1 ? 'pessoa' : 'pessoas'} para poder sortear (mínimo de 3).</p>` : ''}
+      <button class="btn" id="bSortear" ${falta ? 'disabled' : ''}>Realizar sorteio</button>
+      <div id="confirma"></div>`;
+    $('#bSortear').onclick = () => {
+      $('#confirma').innerHTML = `<div class="confirmar"><h3>Confirmar sorteio com ${part.length} pessoas?</h3>
+        <ul>${part.map(p => `<li>${esc(p.nome)}</li>`).join('')}</ul>
+        <p style="margin-top:10px">Depois do sorteio, novas pessoas não conseguem entrar.</p>
+        <div class="botoes" style="margin-top:14px"><button class="btn" id="bSim">Sortear agora</button><button class="btn sec" id="bNao">Cancelar</button></div><p class="erro" id="erroC"></p></div>`;
+      $('#bNao').onclick = () => ($('#confirma').innerHTML = '');
+      $('#bSim').onclick = async e => {
+        ocupado(e.currentTarget, true, 'Sorteando…');
+        try { telaPerfil(gid, await api('POST', `grupos/${gid}/sortear`, null, gid)); $('#secAmigo').scrollIntoView({ behavior: 'smooth' }); }
+        catch (er) { mostrarErro($('#erroC'), er); ocupado(e.currentTarget, false); }
+      };
+      $('#confirma').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    };
+  }
+
+  box.addEventListener('click', async e => {
+    const rm = e.target.closest('[data-rm]'), pin = e.target.closest('[data-pin]'), pt = e.target.closest('[data-part]');
+    if (rm) {
+      admMsg.innerHTML = `<div class="confirmar"><h3>Remover ${esc(rm.dataset.nome)} do sorteio?</h3><p>A pessoa e a lista de presentes dela serão apagadas.</p>
+        <div class="botoes" style="margin-top:14px"><button class="btn" id="bSimRm">Remover</button><button class="btn sec" id="bNaoRm">Cancelar</button></div><p class="erro" id="erroRm"></p></div>`;
+      $('#bNaoRm').onclick = () => (admMsg.innerHTML = '');
+      $('#bSimRm').onclick = async ev => {
+        ocupado(ev.currentTarget, true, 'Removendo…');
+        try { telaPerfil(gid, await api('DELETE', `grupos/${gid}/pessoas/${rm.dataset.rm}`, null, gid)); }
+        catch (er) { mostrarErro($('#erroRm'), er); ocupado(ev.currentTarget, false); }
+      };
+    }
+    if (pin) {
+      admMsg.innerHTML = `<div class="confirmar"><h3>Gerar um PIN novo para ${esc(pin.dataset.nome)}?</h3><p>Use quando a pessoa esqueceu o PIN. O antigo deixa de funcionar.</p>
+        <div class="botoes" style="margin-top:14px"><button class="btn" id="bSimPin">Gerar PIN novo</button><button class="btn sec" id="bNaoPin">Cancelar</button></div><p class="erro" id="erroPin"></p></div>`;
+      $('#bNaoPin').onclick = () => (admMsg.innerHTML = '');
+      $('#bSimPin').onclick = async ev => {
+        ocupado(ev.currentTarget, true, 'Gerando…');
+        try {
+          const r = await api('POST', `grupos/${gid}/pessoas/${pin.dataset.pin}/pin`, null, gid);
+          admMsg.innerHTML = `<div class="confirmar"><h3>Novo PIN de ${esc(r.nome)}</h3><p class="pin-novo">${esc(r.pin)}</p><p>Envie para a pessoa. Ela entra pelo link de convite, escolhe "Já me cadastrei" e usa este PIN.</p>
+            <div class="botoes" style="margin-top:14px"><button class="btn sec" id="bOkPin">Fechar</button></div></div>`;
+          $('#bOkPin').onclick = () => (admMsg.innerHTML = '');
+        } catch (er) { mostrarErro($('#erroPin'), er); ocupado(ev.currentTarget, false); }
+      };
+    }
+    if (pt) {
+      try { telaPerfil(gid, await api('PUT', `grupos/${gid}/eu`, { participa: pt.dataset.part === '1' }, gid)); }
+      catch (er) { admMsg.innerHTML = `<p class="erro">${esc(er.message)}</p>`; }
+    }
+  });
+}
+
+rota();
+})();
+</script>
+</body>
+</html>
